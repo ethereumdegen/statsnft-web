@@ -21,51 +21,62 @@
        <div class=" ">
 
        </div>
-       <div class="  flex lg:flex-row flex-col  ">
+       <div class="    w-full text-center ">
+
+
+     
+           <img src="@/assets/images/BananaSmasher.jpg" class=" py-8" style="margin:0 auto; width:100%; max-width:1000px;  " />
+     
+
  
-         <div class="  md:w-1/2  w-full mt-8 py-8  px-1  text-center">
-
-            <div class="hidden text-white text-xl my-4">  Neutral grass-roots organization.  </div> 
-
-        <div>
-            <router-link to="/stake"  class="select-none no-underline bg-blue-700 mb-16 p-2 inline-block rounded hover:bg-blue-900 border-gray-800 border-2 cursor-pointer text-blue-100" style=" text-shadow: 1px 1px #222;"> Join the Guild   </router-link> 
-        </div>
-      
-            <img src="@/assets/images/hero-dark2.png" class="pl-4" style="margin:0 auto;" />
-
-         </div>
-         <div class="   md:w-1/2  w-full  text-center ">
-           
-            
-           <FrontPageMedia />
-
-
-         </div>
+        
+          
        </div>
      </div>
    </div>
 
 
-    <div class="section  text-white  border-b-2 border-black " style="background:#222;">
+    <div class="section  text-white  border-b-2 border-black " v-if="signedInToWeb3" style="background:#222;">
      <div class="w-container  ">
 
          
 
           <div class=" w-2/3  mt-8 py-8" style="margin: 0 auto;">
            
-                <div class="text-2xl text-center"> How It Works </div>
+                <div class="text-2xl text-center"> You will earn up to: {{  parseFloat( balances['WETH'] ) }} WETH </div>
 
-                <ul class=" "> 
-                    <li class="my-4"> 1. Stake 0xBTC in the Miners Guild Contract Pool </li>
-                    <li class="my-4" > 2. Neutral Dapps/Contracts donate their fees [in execution flow] to the Pool to earn Community Goodwill </li>
-                    <li class="my-4" > 3. Unstake at any time to withdraw <span class="text-purple-300"> your original deposit + accrued donations </span>  </li>
-               </ul>
+                  <div class="flex flex-col my-8">
+                    <label> Banana Token Id </label>
+                     <input type="numeric" v-model="tokenId" class="text-black p-2 my-2" style="width:200px"/>    
+                  </div>
 
-                <div class="text-lg text-center my-16 hidden "> TLDR: This is a funnel for donations from community-driven dapps. </div>
+                 <div class="mt-8 bg-red-600 select-none hover:bg-red-500 cursor-pointer rounded p-4 text-white border-2 border-black inline-block" @click="smash()"> Smash my Banana! </div>
+         </div>
+
+        
+         
 
 
-                <p class="text-gray-500 bg-gray-800 p-4"> 🛈 Smart contracts that pay fees into the MinersGuild contract, during execution flow, are more likely to be promoted, supported, and used by the community than ones that do not. </p>
+     </div>
+   </div>
 
+
+
+     <div class="section  text-white  border-b-2 border-black " v-if="signedInToWeb3" style="background:#222;">
+     <div class="w-container  ">
+
+         
+
+          <div class=" w-2/3  mt-8 py-8" style="margin: 0 auto;">
+           
+                <div class="text-2xl text-center"> Donate to teh Banana Smashers!! </div>
+
+                  <div class="flex flex-col my-8">
+                    <label> WETH donation amount </label>
+                     <input type="numeric" v-model="donationAmount" class="text-black p-2 my-2" style="width:200px"/>    
+                  </div>
+
+                 <div class="mt-8 bg-yellow-500 select-none hover:bg-yellow-300 cursor-pointer rounded p-4 text-black border-2 border-black inline-block" @click="donate()"> Donate WETH! </div>
          </div>
 
         
@@ -89,29 +100,29 @@
 
 
 import Web3Plug from '../js/web3-plug.js'  
-
  
-import FrontPageMedia from './components/FrontPageMedia.vue';
  
 import Navbar from './components/Navbar.vue';
  
 import Footer from './components/Footer.vue';
 import TabsBar from './components/TabsBar.vue';
-  
-import StarflaskAPIHelper from '../js/starflask-api-helper.js';
+   
 import FrontendHelper from '../js/frontend-helper.js';
+
+const ERC721ABI = require('../contracts/ERC721ABI.json')
 
 
 export default {
   name: 'Home',
   props: [],
-  components: {Navbar, Footer, TabsBar, FrontPageMedia },
+  components: {Navbar, Footer },
   data() {
     return {
       web3Plug: new Web3Plug() , 
-      activePanelId: null, 
-       
-
+      signedInToWeb3: false,
+      balances: {} ,
+      tokenId: 0,
+      donationAmount: 0 
       
     }
   },
@@ -124,6 +135,8 @@ export default {
          
         this.activeAccountAddress = connectionState.activeAccountAddress
         this.activeNetworkId = connectionState.activeNetworkId 
+
+        this.signedInToWeb3 =  (this.activeAccountAddress != null)
          
       }.bind(this));
    this.web3Plug.getPlugEventEmitter().on('error', function(errormessage) {
@@ -139,30 +152,67 @@ export default {
 
   },
   mounted: function () {
-         
+    this.getBalances()
     
+    setInterval(  this.getBalances.bind(this), 5000  )
   }, 
   methods: {
-          setActivePanel(panelId){
-              if(panelId == this.activePanelId){
-                this.activePanelId = null;
-                return 
-              }
-               this.activePanelId = panelId ;
+
+          async getBalances(){
+
+            const smasherAddress = '0xbf3122b2aa3102693e3194df7870e1a7ae146b50'
+            
+            const currencyAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' //WETH9  
+
+            const currencyContract = this.web3Plug.getTokenContract( currencyAddress )
+
+            let wethBalanceRaw = await currencyContract.methods.balanceOf( smasherAddress ).call()
+
+            this.balances['WETH'] = this.web3Plug.rawAmountToFormatted(wethBalanceRaw, 18)
+
+            console.log(' this.balances',  this.balances)
+
           },
-          onTabSelect(tabname){
-            console.log(tabname)
-
-              this.selectedTab = tabname.toLowerCase()
 
 
-          },
+          smash( ){
+            
 
-          getRouteTo(dest){
-            return FrontendHelper.getRouteTo(dest)
-          }
+              let tokenId = parseInt( this.tokenId )    
 
-       
+                console.log('smash! ',tokenId)
+
+              let userAddress = this.web3Plug.getActiveAccountAddress()
+
+              const bananaContract = this.web3Plug.getCustomContract(  ERC721ABI , '0xb9ab19454ccb145f9643214616c5571b8a4ef4f2' )
+
+              const currencyAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' //WETH9  
+
+              const smasherAddress = '0xbf3122b2aa3102693e3194df7870e1a7ae146b50'
+
+              bananaContract.methods.safeTransferFrom( userAddress, smasherAddress, tokenId , currencyAddress ).send({from: userAddress })
+          },  
+        
+
+         donate( ){
+            
+
+              let donationAmount = this.web3Plug.formattedAmountToRaw( this.donationAmount, 18 )    
+
+              
+
+              let userAddress = this.web3Plug.getActiveAccountAddress()
+
+            
+              const currencyAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' //WETH9  
+
+              const smasherAddress = '0xbf3122b2aa3102693e3194df7870e1a7ae146b50'
+
+              const wethContract = this.web3Plug.getTokenContract(   currencyAddress  )
+
+
+              wethContract.methods.transfer( smasherAddress, donationAmount ).send({from: userAddress })
+          },  
  
 
   }

@@ -327,6 +327,8 @@ export default class Web3Plug {
 
   rawAmountToFormatted(amount,decimals)
   {
+    if(amount == 0) return 0;
+    
     return (amount * Math.pow(10,-1 * decimals)).toFixed(decimals);
   }
 
