@@ -172,6 +172,8 @@ export default {
 
             console.log(' this.balances',  this.balances)
 
+            this.$forceUpdate()
+
           },
 
 
