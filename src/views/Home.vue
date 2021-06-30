@@ -71,6 +71,8 @@
            
                 <div class="text-2xl text-center"> Donate to teh Banana Smashers!! </div>
 
+                <p class="text-sm text-center ">  (This will increase the amount of WETH that the next banana smasher will get -- duh!) </p> 
+
                   <div class="flex flex-col my-8">
                     <label> WETH donation amount </label>
                      <input type="numeric" v-model="donationAmount" class="text-black p-2 my-2" style="width:200px"/>    
