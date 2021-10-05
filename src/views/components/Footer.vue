@@ -13,10 +13,14 @@
           </div>
         <div class="w-1/2 lg:w-1/4 flex flex-col  px-2">
           <h3 class=" text-lg font-bold ">Community &amp; Social</h3>
-          <a href="https://discord.0xbtc.io" target="_blank" class="no-underline inline-block text-sm text-gray-200 hover:text-purple-300 ">0xBTC Discord</a>
+          <a href="https://opensea.io/collection/0xbtc-stats/" target="_blank" class="no-underline inline-block text-sm text-gray-200 hover:text-purple-300 ">Opensea Collection</a>
+           <a href="https://discord.0xbtc.io" target="_blank" class="no-underline inline-block text-sm text-gray-200 hover:text-purple-300 ">0xBTC Discord</a>
              
          
          </div>
+
+
+         
 
 
       </div>
