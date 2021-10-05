@@ -47,7 +47,7 @@
 
                 <div  class="flex flex-row">
                   <div class="flex-grow"></div>
-                  <input type="number" v-model="mintAmount" class="text-black border-black border-2 p-2 mx-4 " />
+                  <input type="number" min=1 max=10 v-model="mintAmount" class="text-black border-black border-2 p-2 mx-4 " />
                   <div class="select-none bg-orange-500 hover:bg-orange-300 p-2 px-8 rounded border-gray border-2 cursor-pointer" @click="mint"> Mint </div>
                   <div class="flex-grow"></div>
               </div>  
@@ -235,12 +235,22 @@ export default {
 
           async mint( ){
 
+
+            if(!this.signedInToWeb3){
+
+              this.web3Plug.connectWeb3()
+              return 
+
+            }
+
             let userAddress = this.web3Plug.getActiveAccountAddress()
              let amt =  ( this.mintAmount ).toString()
 
              if( parseInt(amt) > 10  ){
                this.errorMessage = 'You may only mint up to 10 at once. '
+               return 
              }
+             this.errorMessage = null 
 
              let ethValue = parseInt(amt) * 2 * 10000000000000000 ; 
 
