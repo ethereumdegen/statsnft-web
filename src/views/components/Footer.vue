@@ -4,16 +4,17 @@
       <div class=" flex lg:flex-row h-full">
          <div class="lg:w-1/4 ">
          </div>
-        <div class="w-1/2 lg:w-1/4 flex flex-col">
+        <div class="w-1/2 lg:w-1/4 flex flex-col px-2">
           <h3 class=" text-lg font-bold ">Documentation</h3>
 
-          <a href="https://etherscan.io/address/0xbf3122b2aa3102693e3194df7870e1a7ae146b50" target="_blank" class="no-underline inline-block text-sm text-gray-200 hover:text-purple-300 ">Smasher Contract</a>
+            <a href="https://etherscan.io/address/0x70eead2a40545188f1a74a5a71e17bc332ea8efb" target="_blank" class="no-underline inline-block text-sm text-gray-200 hover:text-purple-300 ">0xStats Contract</a>
               
               
           </div>
-        <div class="w-1/2 lg:w-1/4 flex flex-col">
+        <div class="w-1/2 lg:w-1/4 flex flex-col  px-2">
           <h3 class=" text-lg font-bold ">Community &amp; Social</h3>
-          
+          <a href="https://discord.0xbtc.io" target="_blank" class="no-underline inline-block text-sm text-gray-200 hover:text-purple-300 ">0xBTC Discord</a>
+             
          
          </div>
 
