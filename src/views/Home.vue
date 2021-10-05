@@ -160,6 +160,8 @@ export default {
 
         this.encodedImageSVG = result.image 
 
+        this.getTotalSupply()
+
          
       }.bind(this));
    this.web3Plug.getPlugEventEmitter().on('error', function(errormessage) {
