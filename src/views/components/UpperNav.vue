@@ -102,8 +102,8 @@ export default {
             this.web3Plug.connectWeb3( )
           },
           getEtherscanBaseURL(){
-              if(this.activeNetworkId == 42){
-                return  'https://kovan.etherscan.io'
+              if(this.activeNetworkId == 4){
+                return  'https://rinkeby.etherscan.io'
               }
               return 'https://etherscan.io'
           },
