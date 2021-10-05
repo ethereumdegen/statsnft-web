@@ -146,13 +146,20 @@ export default {
   created(){
 
  
-    this.web3Plug.getPlugEventEmitter().on('stateChanged', function(connectionState) {
+    this.web3Plug.getPlugEventEmitter().on('stateChanged', async function(connectionState) {
         console.log('stateChanged',connectionState);
          
         this.activeAccountAddress = connectionState.activeAccountAddress
         this.activeNetworkId = connectionState.activeNetworkId 
 
         this.signedInToWeb3 =  (this.activeAccountAddress != null)
+
+        await this.fetchTokenURI() 
+
+        let result = this.parseMetadata( this.encodedMetadata   ) 
+
+        this.encodedImageSVG = result.image 
+
          
       }.bind(this));
    this.web3Plug.getPlugEventEmitter().on('error', function(errormessage) {
@@ -164,7 +171,9 @@ export default {
 
       this.web3Plug.reconnectWeb()
    
-     this.parseMetadata() 
+      let result = this.parseMetadata( this.encodedMetadata   ) 
+
+      this.encodedImageSVG = result.image 
 
   },
   mounted: function () {
@@ -172,6 +181,8 @@ export default {
 
 
     this.getTotalSupply()
+
+
 
     
     setInterval(  this.getBalances.bind(this), 5000  )
@@ -200,6 +211,19 @@ export default {
 */  
           },
 
+          async fetchTokenURI(){
+             let contractData = await this.web3Plug.getContractDataForActiveNetwork()
+             const nftContract = this.web3Plug.getCustomContract( StatsNFTABI, contractData.statsnft.address  )
+
+            let result = await nftContract.methods.tokenURI( 0 ).call()
+
+            console.log('fetchj', result )
+            if(result){
+                this.encodedMetadata  = result
+            }
+            
+          },
+
           async getTotalSupply(){
 
             let contractData = await this.web3Plug.getContractDataForActiveNetwork()
@@ -214,8 +238,8 @@ export default {
           },
 
 
-          parseMetadata( metadata ){
-            let tokenURI = this.encodedMetadata 
+          parseMetadata( tokenURI ){
+           // let tokenURI = this.encodedMetadata 
 
             const split = tokenURI.split('base64,')[1]
             let base64data = split ? split : tokenURI
@@ -224,12 +248,12 @@ export default {
 
             console.log( output )
             
-            this.encodedImageSVG = JSON.parse(output) .image 
+           // this.encodedImageSVG = JSON.parse(output) .image 
 
-             console.log( this.encodedImageSVG)
+             //console.log( this.encodedImageSVG)
 
 
-            return output 
+            return JSON.parse(output)
           },
 
 
