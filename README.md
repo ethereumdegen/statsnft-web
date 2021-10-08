@@ -1,6 +1,4 @@
-# Miners Guild 
-
-Community DAO for Neutral Dapps
+# Stats NFT Website 
  
 
  
